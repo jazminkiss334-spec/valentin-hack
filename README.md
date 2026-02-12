@@ -1,1 +1,180 @@
 # valentin-hack
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<title>SAMSUNG_SECURE_HEART_v1.0</title>
+<style>
+body {
+    background-color: black;
+    color: #00ff88;
+    font-family: "Courier New", monospace;
+    padding: 20px;
+}
+input {
+    background: black;
+    border: 1px solid #00ff88;
+    color: #00ff88;
+    padding: 5px;
+    font-family: inherit;
+}
+button {
+    background: #00ff88;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.hidden { display: none; }
+#heart {
+    font-size: 50px;
+    text-align: center;
+    animation: pulse 1s infinite;
+}
+@keyframes pulse {
+    0% { transform: scale(1); color: #ff004c; }
+    50% { transform: scale(1.2); color: #ff66a3; }
+    100% { transform: scale(1); color: #ff004c; }
+}
+.progress-bar {
+    width: 100%;
+    background: #111;
+    border: 1px solid #00ff88;
+}
+.progress {
+    width: 0%;
+    height: 20px;
+    background: #00ff88;
+}
+</style>
+</head>
+<body>
+
+<h2>SAMSUNG_SECURE_HEART_v1.0</h2>
+<p>Galaxy Pairing Protocol – Restricted Access</p>
+
+<div id="terminal"></div>
+<div id="inputArea">
+    <input type="text" id="userInput" autocomplete="off">
+    <button onclick="submitAnswer()">ENTER</button>
+</div>
+
+<div id="progressSection" class="hidden">
+    <p>Running unit tests...</p>
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+</div>
+
+<div id="finalMessage" class="hidden">
+    <h1 style="text-align:center;">All tests passed.<br>Final result: I love you.</h1>
+    <div id="heart">❤️</div>
+    <p style="text-align:center;">System locked.<br>Owner: You & Me.<br>Status: Forever paired.</p>
+</div>
+
+<script>
+const stages = [
+    {
+        question: "> Enter system vendor:",
+        answer: "samsung"
+    },
+    {
+        question: "> Enter relationship initialization date (MM-DD format):",
+        answer: "03-08"
+    },
+    {
+        question: "> First kiss location? (riverbank in Budapest)",
+        answer: "dunapart"
+    },
+    {
+        question: "> Pre-intimacy carbohydrate protocol?",
+        answer: "spagetti"
+    },
+    {
+        question: "> Her favorite flower?",
+        answer: "rozsa"
+    },
+    {
+        question: "> Who loves more? (justice mode activated)",
+        answer: ["both", "equal"]
+    }
+];
+
+let currentStage = 0;
+let attempts = 3;
+
+const terminal = document.getElementById("terminal");
+
+function print(text) {
+    terminal.innerHTML += text + "<br>";
+}
+
+function submitAnswer() {
+    const input = document.getElementById("userInput");
+    let value = input.value.toLowerCase().trim();
+    input.value = "";
+
+    let correct = stages[currentStage].answer;
+
+    if (Array.isArray(correct)) {
+        if (correct.includes(value)) {
+            nextStage();
+        } else {
+            wrongAnswer();
+        }
+    } else {
+        if (value === correct) {
+            nextStage();
+        } else {
+            wrongAnswer();
+        }
+    }
+}
+
+function wrongAnswer() {
+    attempts--;
+    print("✖ Incorrect. Attempts left: " + attempts);
+    if (attempts === 0) {
+        print("SYSTEM LOCKED.");
+        document.getElementById("inputArea").classList.add("hidden");
+    }
+}
+
+function nextStage() {
+    print("✔ Access granted.");
+    currentStage++;
+    attempts = 3;
+
+    if (currentStage < stages.length) {
+        setTimeout(() => {
+            print("<br>" + stages[currentStage].question);
+        }, 800);
+    } else {
+        startFinalSequence();
+    }
+}
+
+function startFinalSequence() {
+    document.getElementById("inputArea").classList.add("hidden");
+    print("<br>Decrypting emotional core...");
+    setTimeout(() => {
+        document.getElementById("progressSection").classList.remove("hidden");
+        let progress = document.getElementById("progress");
+        let width = 0;
+        let interval = setInterval(() => {
+            width++;
+            progress.style.width = width + "%";
+            if (width >= 100) {
+                clearInterval(interval);
+                document.getElementById("progressSection").classList.add("hidden");
+                document.getElementById("finalMessage").classList.remove("hidden");
+            }
+        }, 30);
+    }, 1500);
+}
+
+print(stages[currentStage].question);
+</script>
+
+</body>
+</html>
